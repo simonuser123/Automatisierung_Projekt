@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Ampel" Id="{26ef8762-be59-4741-8ba7-897e4ca54110}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Ampel
+VAR_INPUT
+	estate : eBetriebszustand;
+END_VAR
+VAR_OUTPUT
+	bAmpelgruen : BOOL;
+	bAmpelrot : BOOL;
+	bAmpelgelb : BOOL;
+END_VAR
+VAR
+	Ampel_blinken : FB_Blinklicht;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Die Ampel leuchtet je nach Betriebszustand in unterschiedlichen Farben, um diesen anzuzeigen
+CASE estate OF
+	
+	eBetriebszustand.off:
+	bAmpelgruen := FALSE;
+	bAmpelrot := TRUE;
+	bAmpelgelb := FALSE;	
+	
+	eBetriebszustand.init:
+	bAmpelrot := FALSE;
+	bAmpelgelb := FALSE;
+	Ampel_blinken(bStartStop:=TRUE , tPeriode:= , bBlink=>bAmpelgruen );
+	
+	eBetriebszustand.ready:
+	bAmpelrot := FALSE;
+	Ampel_blinken(bStartStop:=TRUE , tPeriode:= , bBlink=>bAmpelgelb );
+	bAmpelgruen := NOT bAmpelgelb;
+	//gruen_blinken(bStartStop:=True , tPeriode:= , bBlink=>bAmpelgruen );
+	
+	eBetriebszustand.production:
+	bAmpelrot := FALSE;
+	bAmpelgelb := FALSE;
+	bAmpelgruen := TRUE;
+	
+	eBetriebszustand.done:
+	bAmpelgruen := TRUE;
+	bAmpelrot := FALSE;
+	bAmpelgelb := TRUE;	
+	
+END_CASE
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Ampel">
+      <LineId Id="111" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="76" Count="2" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="80" Count="1" />
+      <LineId Id="88" Count="1" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="95" Count="1" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="15" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

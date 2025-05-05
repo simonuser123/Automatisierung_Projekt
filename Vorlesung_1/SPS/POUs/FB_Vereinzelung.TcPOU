@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Vereinzelung" Id="{f24c2d52-802e-40a8-8120-6923e0b02308}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Vereinzelung 
+VAR_INPUT
+	//Steuervariablen
+	benable : BOOL;
+	bexecute : BOOL;
+	// Hardware Eingänge
+	bsensor1 : BOOL; //Flasche in der Kammer 
+	bsensor2 : BOOL; //Flasche inm Rohr 
+	bsensor3 : BOOL; //Flasche auf Kopf
+	bsensor4 : BOOL; //Flasche am Förderband
+	
+END_VAR
+VAR_OUTPUT
+	//Hardwareausgänge 
+	bgate1 : BOOL;
+	bgate2 : BOOL;
+	//Steuervariable 
+	estate : eBetriebszustand;
+END_VAR
+VAR
+	nstate : INT := 100;
+	fbTon : Ton;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbTon(IN:= , PT:=T#1S , Q=> , ET=> );
+
+CASE nstate OF 
+	100:
+	eState :=eBetriebszustand.off;
+	
+	IF bsensor1 AND benable THEN 
+		nstate := 21;//Ready
+	ELSIF benable THEN
+		nstate := 0; //Init		
+	END_IF
+	
+	0: // Kammer ist leer 
+	estate := eBetriebszustand.init;
+	bgate1 := FALSE;
+	bgate2 := FALSE;
+	
+	IF bsensor2 AND NOT bsensor3 THEN
+		nstate := 1; //Schleuße Oben öffnen
+	END_IF
+	
+	1: // Schleuße oben öffnen
+	estate := eBetriebszustand.init;
+	bgate1 := TRUE;
+	bgate2 := FALSE;
+	
+	IF bsensor1 THEN
+		nstate := 2; //Schleuße oben schließen
+	END_IF
+	
+	2: //Schleuße oben schließen
+	estate := eBetriebszustand.init;
+	bgate1 := FALSE;
+	bgate2 := FALSE;
+	fbTon.In := TRUE;
+	
+	IF fbTon.Q THEN
+		nstate := 21; //ready
+		fbTon.IN := FALSE;
+	END_IF
+	
+	21: //ready
+	estate:= eBetriebszustand.ready;
+	bgate1:= FALSE;
+	bgate2:= FALSE;
+	
+	
+	IF bexecute THEN
+		nstate := 3; //Schleuße unten öffnen
+	END_IF
+	
+	3: //Schleuße unten öffnen
+	estate:= eBetriebszustand.production;
+	bgate1:= FALSE;
+	bgate2:= TRUE;
+	
+	IF bsensor4 THEN
+		nstate := 4; //Schleuße unten schließen
+	END_IF
+	
+	4: //Schleuße unten schließen
+	estate:= eBetriebszustand.production;
+	bgate1:= FALSE;
+	bgate2:= FALSE;
+	fbTon.IN:= TRUE;
+	
+	IF fbTon.Q THEN
+		nstate := 41; //done
+		fbTon.IN := FALSE;
+	END_IF	
+	
+	41: //Done
+	estate:= eBetriebszustand.done;
+	bgate1:= FALSE;
+	bgate2:= FALSE;
+	
+	IF NOT bexecute THEN
+		nstate:= 0; //Kammer leer
+	END_IF
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Vereinzelung">
+      <LineId Id="73" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="38" Count="1" />
+      <LineId Id="43" Count="2" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="48" Count="1" />
+      <LineId Id="51" Count="3" />
+      <LineId Id="31" Count="1" />
+      <LineId Id="57" Count="2" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="61" Count="1" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="66" Count="3" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="75" Count="3" />
+      <LineId Id="80" Count="3" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="91" Count="3" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="97" Count="3" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="101" Count="1" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="108" Count="1" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="110" Count="3" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="28" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

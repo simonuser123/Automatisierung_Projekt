@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="MAIN" Id="{bd947791-4b97-4a15-8e58-4d7bb5a41737}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbBlinklicht : FB_Blinklicht;
+	fbVereinzelung : FB_Vereinzelung;
+	fbezylinder1 : FB_EZylinder;
+	fbezylinder2 : FB_EZylinder;
+	MCPower : MC_Power;
+	fbAmpel : FB_Ampel;
+	fbFoerderband : FB_Foerderband;
+	
+	fbTransport : FB_Transport;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+//fbBlinklicht(bStartStop:= IFC_HW.bExecute,
+						//tPeriode:= , bBlink=> IFC_HW.bAmpelRot);
+
+IFC_HW.ax_BandMotor.Readstatus();
+
+MCPower(
+	Axis:= IFC_HW.ax_BandMotor, 
+	Enable:= TRUE, 
+	Enable_Positive:= TRUE, 
+	Enable_Negative:= TRUE, 
+	Override:= , 
+	BufferMode:= , 
+	Options:= , 
+	Status=> , 
+	Busy=> , 
+	Error=> , 
+	ErrorID=> );
+				
+fbVereinzelung(
+	benable:= IFC_HW.bEnable, 
+	bexecute:= IFC_HW.bExecute, 
+	bsensor1:= IFC_HW.bEinzelSens1, 
+	bsensor2:= IFC_HW.bEinzelSens2, 
+	bsensor3:= IFC_HW.bEinzelSens3, 
+	bsensor4:= IFC_HW.bBandsens1, 
+	bgate1=> fbeZylinder1.bgate, 
+	bgate2=> fbeZylinder2.bgate, 
+	estate=> );
+	
+fbFoerderband(
+	benable:= IFC_HW.bEnable, 
+	bexecute:= IFC_HW.bExecute, 
+	bhalt:= IFC_HW.bBandSens1, 
+	estate=> , 
+	ax:= );
+	
+	fbezylinder1(bgate:= , berror:= , bR1=>IFC_HW.bR1AKT1 , bR2=>IFC_HW.br2AKT1 );
+	
+	fbezylinder2(bgate:= , berror:= , bR1=>IFC_HW.bR1AKT2 , bR2=> IFC_HW.bR2AKT2);
+	
+	
+	
+	fbAmpel(estate:= fbVereinzelung.estate, bAmpelgruen=>IFC_HW.bAmpelGrun , bAmpelrot=>IFC_HW.bAmpelRot , bAmpelgelb=>IFC_HW.bAmpelGelb );
+	
+	fbTransport(
+	bEnable:= IFC_Hw.bEnable, 
+	bExecute:= IFC_HW.bExecute, 
+	nstation:= , 
+	bSens1:= IFC_HW.bBandSens1, 
+	bSens2:= IFC_HW.bBandSens2, 
+	bSens3:= IFC_HW.bBandSens3, 
+	bSens4:= IFC_HW.bBandSens4, 
+	eState=> , 
+	bstopper1=> IFC_HW.bBandHub1, 
+	bstopper2=> IFC_HW.bBandHub2, 
+	bstopper3=> IFC_HW.bBandHub3, 
+	ax:= );]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="55" Count="1" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="97" Count="11" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="63" Count="8" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="114" Count="4" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="72" Count="3" />
+      <LineId Id="109" Count="1" />
+      <LineId Id="83" Count="1" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="133" Count="11" />
+      <LineId Id="132" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

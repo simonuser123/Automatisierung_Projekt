@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Blinklicht" Id="{cf1c7dd2-ae45-498b-93c3-ad3d5f6177a0}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Blinklicht
+VAR_INPUT
+	bStartStop	: BOOL;
+	tPeriode	: TIME := T#1.5S;
+END_VAR
+VAR_OUTPUT
+	bBlink	:BOOL;
+END_VAR
+VAR
+	fbTon	:Ton;
+	fbRtrig	:R_Trig;
+	bEinAus	:BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbRtrig(CLK:= bStartStop , Q=> );
+
+IF fbRtrig.Q THEN
+	bEinAus := NOT bEinAus;
+END_IF
+
+//fbTon.IN := bBlink AND NOT fbTon.Q;
+//fbTon.PT := T#1S;
+
+fbTon(IN:=bEinAus AND NOT fbTon.Q , PT:=T#1.5S , Q=> , ET=> );
+
+
+IF fbTon.ET <= fbTon.PT/2 THEN 
+	bBlink := FALSE;
+ELSIF fbTon.ET > fbTon.PT/2 THEN
+	bBlink := TRUE;
+END_IF
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Blinklicht">
+      <LineId Id="41" Count="1" />
+      <LineId Id="18" Count="2" />
+      <LineId Id="23" Count="11" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

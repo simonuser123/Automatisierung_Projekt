@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_TEST" Id="{99a1af79-e974-4698-ab19-71e4457ded0e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TEST
+VAR_INPUT
+	bVentil : BOOL;
+END_VAR
+VAR_OUTPUT
+	bDoorc : BOOL;
+	bDooro : BOOL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bVentil := FALSE
+	//animation.delay (500);
+	bDooro := TRUE;
+END_IF
+
+IF bVentil := TRUE
+	//animation.delay (500);
+	bDoorc := FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_TEST">
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="20" Count="3" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
