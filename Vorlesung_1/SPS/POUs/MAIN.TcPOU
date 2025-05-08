@@ -12,12 +12,13 @@ VAR
 	fbFoerderband : FB_Foerderband;
 	
 	fbTransport : FB_Transport;
+	ix : UINT;
+	ry : REAL;
+	ax : Axis_Ref;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
-//fbBlinklicht(bStartStop:= IFC_HW.bExecute,
-						//tPeriode:= , bBlink=> IFC_HW.bAmpelRot);
+      <ST><![CDATA[ry := FUN_SCALE(TO_REAL(ix),4096,0,350,0);
 
 IFC_HW.ax_BandMotor.Readstatus();
 
@@ -50,7 +51,7 @@ fbFoerderband(
 	bexecute:= IFC_HW.bExecute, 
 	bhalt:= IFC_HW.bBandSens1, 
 	estate=> , 
-	ax:= );
+	ax:= ax);
 	
 	fbezylinder1(bgate:= , berror:= , bR1=>IFC_HW.bR1AKT1 , bR2=>IFC_HW.br2AKT1 );
 	
@@ -60,7 +61,7 @@ fbFoerderband(
 	
 	fbAmpel(estate:= fbVereinzelung.estate, bAmpelgruen=>IFC_HW.bAmpelGrun , bAmpelrot=>IFC_HW.bAmpelRot , bAmpelgelb=>IFC_HW.bAmpelGelb );
 	
-	fbTransport(
+fbTransport(
 	bEnable:= IFC_Hw.bEnable, 
 	bExecute:= IFC_HW.bExecute, 
 	nstation:= , 
@@ -72,11 +73,10 @@ fbFoerderband(
 	bstopper1=> IFC_HW.bBandHub1, 
 	bstopper2=> IFC_HW.bBandHub2, 
 	bstopper3=> IFC_HW.bBandHub3, 
-	ax:= );]]></ST>
+	ax:= ax);]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
-      <LineId Id="55" Count="1" />
-      <LineId Id="50" Count="0" />
+      <LineId Id="55" Count="0" />
       <LineId Id="93" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="97" Count="11" />

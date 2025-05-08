@@ -21,7 +21,7 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[^CASE nstate OF 
+      <ST><![CDATA[CASE nstate OF 
 	0: // Off
 	fbVereinzelung.benable := FALSE;
 	fbTransport.bEnable := FALSE;

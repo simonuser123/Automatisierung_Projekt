@@ -1450,7 +1450,7 @@ External Setpoint Generation:
 					<Name>NC-Task 1 SVB</Name>
 				</SvbTask>
 				<Axis Id="1" CreateSymbols="true" AxisType="1">
-					<Name>Achse_Band</Name>
+					<Name>Conveyer</Name>
 					<AxisPara>
 						<OtherSettings AllowMotionCmdToSlave="true"/>
 					</AxisPara>
@@ -1892,7 +1892,7 @@ External Setpoint Generation:
 	<Mappings>
 		<MappingInfo Identifier="{05000010-2001-0850-1000-040300205008}" Id="#x02030010" Watchdog="14000000040000000400000004000000"/>
 		<OwnerA Name="TIPC^SPS^SPS Instance">
-			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Achse_Band">
+			<OwnerB Name="TINC^NC-Task 1 SAF^Axes^Conveyer">
 				<Link VarA="PlcTask Inputs^IFC_HW.ax_BandMotor.NcToPlc" VarB="Outputs^ToPlc"/>
 				<Link VarA="PlcTask Outputs^IFC_HW.ax_BandMotor.PlcToNc" VarB="Inputs^FromPlc"/>
 			</OwnerB>
