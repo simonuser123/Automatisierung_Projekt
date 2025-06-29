@@ -1452,7 +1452,15 @@ External Setpoint Generation:
 				<Axis Id="1" CreateSymbols="true" AxisType="1">
 					<Name>Conveyer</Name>
 					<AxisPara>
+						<Dynamic AccelerationMaximum="700" DecelerationMaximum="700" Acceleration="400" Deceleration="400" Jerk="6000"/>
+						<Velo Maximum="50"/>
 						<OtherSettings AllowMotionCmdToSlave="true"/>
+						<ParameterChanged>39</ParameterChanged>
+						<ParameterChanged>257</ParameterChanged>
+						<ParameterChanged>259</ParameterChanged>
+						<ParameterChanged>242</ParameterChanged>
+						<ParameterChanged>258</ParameterChanged>
+						<ParameterChanged>241</ParameterChanged>
 					</AxisPara>
 					<Encoder Name="Enc" EncType="1">
 						<Vars VarGrpType="1">
@@ -1513,7 +1521,7 @@ External Setpoint Generation:
 					</Encoder>
 					<Drive Name="Drive" DrvType="5">
 						<DrvPara>
-							<Analog TorqueSetpointScale="10" ScaleFactorActTorque="0.1"/>
+							<Analog VeloReferenz="50" TorqueSetpointScale="10" ScaleFactorActTorque="0.1"/>
 							<TimeComp TaskDelayCycles="1"/>
 						</DrvPara>
 						<Vars VarGrpType="1">
@@ -1607,7 +1615,7 @@ External Setpoint Generation:
 		</Motion>
 		<Plc>
 			<Project GUID="{A9D141E6-DF0E-4E90-BF67-1AF37B55296D}" Name="SPS" PrjFilePath="SPS\SPS.plcproj" TmcFilePath="SPS\SPS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPS\SPS.tmc" TmcHash="{3C23D236-2EC2-1E57-7076-BC8433F528FD}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPS\SPS.tmc" TmcHash="{F74CFFD4-9063-15E0-899C-C86C5B055A28}">
 					<Name>SPS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -1621,6 +1629,10 @@ External Setpoint Generation:
 							<Name>IFC_HW.bExecute</Name>
 							<Comment><![CDATA[ Startsignal	(Start Knopf Konsole)]]></Comment>
 							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.ax.NcToPlc</Name>
+							<Type GUID="{25521FAA-EA5F-4C7F-8864-BBCCDACD2E98}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
 						</Var>
 						<Var>
 							<Name>IFC_HW.bEinzelSens1</Name>
@@ -1757,6 +1769,10 @@ External Setpoint Generation:
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
+						<Var>
+							<Name>MAIN.ax.PlcToNc</Name>
+							<Type GUID="{96B75FEB-2D84-43BE-A3EC-D9A681F27D52}" Namespace="MC">PLCTONC_AXIS_REF</Type>
+						</Var>
 						<Var>
 							<Name>IFC_HW.bAmpelRot</Name>
 							<Comment><![CDATA[ Signal-LED Rot]]></Comment>

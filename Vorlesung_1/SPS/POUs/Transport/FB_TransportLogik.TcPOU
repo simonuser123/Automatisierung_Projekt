@@ -84,13 +84,13 @@ END_VAR
 		bStop4 := TRUE;
 	END_IF
 	
-	IF bStation1 AND (nStation := 1) THEN
+	IF bStation1 AND (nStation = 1) THEN
 		nstate := 4; //Förderband Stop
-	ELSIF bStation2 AND (nStation := 2) THEN
+	ELSIF bStation2 AND (nStation = 2) THEN
 		nstate := 4; //Förderband Stop
-	ELSIF bStation3 AND (nStation := 3) THEN
+	ELSIF bStation3 AND (nStation = 3) THEN
 		nstate := 4; //Förderband Stop
-	ELSIF bStation4 AND (nStation := 4) THEN
+	ELSIF bStation4 AND (nStation = 4) THEN
 		nstate := 4; //Förderband Stop
 	END_IF
 	
@@ -113,7 +113,6 @@ END_VAR
 	END_IF
 	
 	5: // Done
-	
 	IF NOT bExecute THEN
 		nstate := 2; // Ready
 	END_IF
@@ -169,7 +168,8 @@ END_CASE]]></ST>
       <LineId Id="104" Count="0" />
       <LineId Id="119" Count="0" />
       <LineId Id="118" Count="0" />
-      <LineId Id="121" Count="6" />
+      <LineId Id="121" Count="1" />
+      <LineId Id="124" Count="3" />
       <LineId Id="36" Count="0" />
     </LineIds>
   </POU>

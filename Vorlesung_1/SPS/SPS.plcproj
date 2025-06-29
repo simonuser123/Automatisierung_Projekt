@@ -18,6 +18,9 @@
     <LibraryReferences>{a3ae0d67-546b-4788-9ba0-469160066a1c}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\DUT.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\eBetriebszustand.TcDUT">
       <SubType>Code</SubType>
     </Compile>

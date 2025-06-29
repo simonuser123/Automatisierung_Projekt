@@ -29,13 +29,8 @@ END_VAR]]></Declaration>
       <ST><![CDATA[ax.ReadStatus();
 
 mcReset(
-	Axis:= ax, 
-	Execute:= , 
-	Done=> , 
-	Busy=> , 
-	Error=> , 
-	ErrorID=> );
-	
+	Axis:= ax,);
+		
 mcVelocity(
 	Axis:= ax, 
 	Execute:= , 
@@ -133,8 +128,7 @@ END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_Foerderband">
       <LineId Id="86" Count="1" />
-      <LineId Id="27" Count="5" />
-      <LineId Id="9" Count="0" />
+      <LineId Id="27" Count="1" />
       <LineId Id="37" Count="0" />
       <LineId Id="39" Count="14" />
       <LineId Id="38" Count="0" />
