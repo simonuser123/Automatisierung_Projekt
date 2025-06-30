@@ -41,6 +41,15 @@ END_VAR
 	bStation3=> , 
 	bStation4=> );
 	
+fbTransportBand(
+	benable:= fbTransportLogik.bEnableA, 
+	bexecute:= fbTransportLogik.bExecuteA, 
+	bhalt:= fbTransportLogik.bStopA, 
+	rVel:= 30, 
+	eDirection:= MC_Positive_Direction, 
+	estate=> , 
+	ax:= ax);
+	
 fbTransportLogik(
 	bEnable:= bEnable, 
 	bExecute:= bExecute, 
@@ -57,12 +66,6 @@ fbTransportLogik(
 	bStop3=> , 
 	bStop4=> );
 	
-fbTransportBand(
-	benable:= fbTransportLogik.bEnableA, 
-	bexecute:= fbTransportLogik.bExecuteA, 
-	bhalt:= fbTransportLogik.bStopA, 
-	estate=> , 
-	ax:= ax);
 	
 fbTransportA(
 	bstop1:= fbTransportLogik.bStop1, 
@@ -76,12 +79,13 @@ fbTransportA(
       <LineId Id="50" Count="7" />
       <LineId Id="9" Count="0" />
       <LineId Id="74" Count="0" />
+      <LineId Id="113" Count="6" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="120" Count="0" />
       <LineId Id="58" Count="10" />
       <LineId Id="70" Count="2" />
       <LineId Id="35" Count="0" />
       <LineId Id="73" Count="0" />
-      <LineId Id="37" Count="4" />
-      <LineId Id="36" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="44" Count="5" />
       <LineId Id="43" Count="0" />

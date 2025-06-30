@@ -7,78 +7,85 @@ VAR_INPUT
 	benable : BOOL;
 	bexecute : BOOL;
 	bhalt : BOOL;
+	rVel : INT := 30; //mm per s
+	
+	eDirection : MC_Direction := MC_Positive_Direction;
 END_VAR
 VAR_OUTPUT
 	estate: eBetriebszustand;
 END_VAR
 VAR
 	nstate : INT := 0;
-	rvelocity : REAL;
-	racceleration : REAL;
 	
 	//Motion Blöcke der Tc2_Mc2
 	mcReset : MC_Reset;
 	mcPower : MC_Power;
-	mcVelocity : MC_MoveVelocity;
+	mcMove : MC_MoveVelocity;
 	mcHalt : MC_Halt;
+	
+	bAxPower : BOOL;
+	bAXMove : BOOL;
+	
+	fbTon	:Ton;
 END_VAR
 VAR_IN_OUT
-	ax : Axis_Ref;
+	ax : AXIS_REF;
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[ax.ReadStatus();
+      <ST><![CDATA[// update our axis
+ax.ReadStatus();
 
-mcReset(
-	Axis:= ax,);
-		
-mcVelocity(
+mcReset(Axis := ax); 
+
+mcPower(
 	Axis:= ax, 
-	Execute:= , 
-	Velocity:= 30, 
-	Acceleration:= 60, 
-	Deceleration:= , 
-	Jerk:= , 
-	Direction:= MC_Positive_Direction, 
-	BufferMode:= , 
-	Options:= , 
-	InVelocity=> , 
-	Busy=> , 
-	Active=> , 
-	CommandAborted=> , 
-	Error=> , 
-	ErrorID=> );
+	Enable:= bAxPower, 
+	Enable_Positive:= bAxPower, 
+	Enable_Negative:= bAxPower, 
+	Override:= 100);
+
+mcMove(
+	Axis:= ax, 
+	Execute:= bAxMove , 
+	Velocity:= rVel,
+	Acceleration:= 60.0, 
+	Direction:= eDirection);
 	
 mcHalt(
 	Axis:= ax, 
-	Execute:= , 
-	Deceleration:= 60, 
-	Jerk:= , 
-	BufferMode:= , 
-	Options:= , 
-	Done=> , 
-	Busy=> , 
-	Active=> , 
-	CommandAborted=> , 
-	Error=> , 
-	ErrorID=> );
+	Execute:= ,
+	Deceleration:= 60.0);
 	
-	IF NOT mcpower.Status THEN
-		nstate := 0;
-	END_IF
+fbTon(
+  IN := bhalt,   
+  PT := T#1S
+);
 	
+
+IF NOT benable THEN
+	nstate := 0;
+END_IF
+
 CASE nstate OF 
 	
 	0: //off
-	Mcpower.Enable := TRUE;
+	estate := eBetriebszustand.off;
+	bAxPower := FALSE;
+	bAxMove := FALSE;
 	
-	IF Mcpower.Status AND benable THEN
+	IF McPower.Status AND benable THEN
 		nstate := 20; //Ready
+	END_IF
+	IF NOT McPower.Status AND bEnable THEN
+		nstate:=10;
 	END_IF
 	
 	10: // INIT_Reset
 	estate := eBetriebszustand.init;
-	McReset.Execute := TRUE;
-	McPower.Enable := FALSE;
+	mcReset.Execute := TRUE;
+	bAxPower:= FALSE;
+	bAxMove:= FALSE;
+	bhalt:= False;
 	
 	IF McReset.Done THEN
 		nstate:= 11; //INIT-Power
@@ -86,8 +93,7 @@ CASE nstate OF
 	
 	11: //INIT-Power
 	estate := eBetriebszustand.init;
-	McPower.Enable := TRUE;
-	McReset.Execute := FALSE;
+	bAxPower := TRUE;
 	
 	IF Mcpower.Status THEN
 		nstate := 20; //Ready
@@ -95,6 +101,8 @@ CASE nstate OF
 	
 	20: //Ready
 	estate:= eBetriebszustand.ready;
+	mcHalt.Execute := FALSE;
+	bAxMove := FALSE;
 	
 	IF bexecute THEN
 		nstate := 30; // Move
@@ -102,59 +110,87 @@ CASE nstate OF
 	
 	30: //Move
 	estate := eBetriebszustand.production;
-	mcVelocity.Execute := TRUE;
-	mcVelocity.Velocity := 30;
-	mcVelocity.Acceleration := 60;
-	
+	bAxMove := TRUE;
+
 	IF bhalt THEN
-		nstate := 31; //Halt
+		nstate := 31; //Warten
 	END_IF
 	
-	31: // Halten
+	31: //Warten
 	estate := eBetriebszustand.production;
-	mcVelocity.Execute := FALSE;
-	mcHalt.Execute := TRUE;
-	mcHalt.Deceleration := 60;
+	bAxMove := TRUE;
 	
-	40: //Done
-	estate := eBetriebszustand.done;
-	mcHalt.Execute := FALSE;
-	// Hannes Mädels störts weil er einen zu großen Johannes hat 
+	IF fbTOn.Q THEN
+		nstate:= 32; //Halten
+	END_IF
+	
+	32: //Halten
+	estate := eBetriebszustand.production;
+    mcHalt.Execute := TRUE;
+	
+	
 	IF NOT bexecute THEN
 		nstate := 20; // Ready
 	END_IF
 	
-END_CASE]]></ST>
+END_CASE
+]]></ST>
     </Implementation>
     <LineIds Name="FB_Foerderband">
-      <LineId Id="86" Count="1" />
-      <LineId Id="27" Count="1" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="203" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="288" Count="0" />
+      <LineId Id="184" Count="6" />
       <LineId Id="37" Count="0" />
-      <LineId Id="39" Count="14" />
-      <LineId Id="38" Count="0" />
+      <LineId Id="39" Count="3" />
+      <LineId Id="277" Count="0" />
+      <LineId Id="46" Count="0" />
       <LineId Id="54" Count="0" />
-      <LineId Id="56" Count="11" />
-      <LineId Id="55" Count="0" />
-      <LineId Id="68" Count="5" />
+      <LineId Id="56" Count="2" />
+      <LineId Id="278" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="314" Count="2" />
+      <LineId Id="298" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="300" Count="0" />
+      <LineId Id="235" Count="2" />
+      <LineId Id="72" Count="1" />
       <LineId Id="77" Count="0" />
       <LineId Id="74" Count="0" />
-      <LineId Id="78" Count="4" />
-      <LineId Id="106" Count="17" />
+      <LineId Id="213" Count="1" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="80" Count="2" />
+      <LineId Id="280" Count="2" />
+      <LineId Id="106" Count="3" />
+      <LineId Id="283" Count="2" />
+      <LineId Id="111" Count="6" />
+      <LineId Id="218" Count="0" />
+      <LineId Id="120" Count="3" />
       <LineId Id="76" Count="0" />
       <LineId Id="83" Count="1" />
+      <LineId Id="248" Count="0" />
+      <LineId Id="219" Count="0" />
       <LineId Id="88" Count="5" />
-      <LineId Id="95" Count="1" />
-      <LineId Id="98" Count="2" />
-      <LineId Id="97" Count="0" />
-      <LineId Id="101" Count="1" />
-      <LineId Id="94" Count="0" />
-      <LineId Id="104" Count="0" />
-      <LineId Id="125" Count="2" />
-      <LineId Id="124" Count="0" />
-      <LineId Id="105" Count="0" />
-      <LineId Id="129" Count="6" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="240" Count="2" />
+      <LineId Id="301" Count="0" />
+      <LineId Id="317" Count="0" />
+      <LineId Id="308" Count="0" />
+      <LineId Id="318" Count="0" />
+      <LineId Id="303" Count="3" />
+      <LineId Id="243" Count="1" />
+      <LineId Id="299" Count="0" />
+      <LineId Id="289" Count="0" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="133" Count="2" />
       <LineId Id="85" Count="0" />
       <LineId Id="75" Count="0" />
+      <LineId Id="286" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

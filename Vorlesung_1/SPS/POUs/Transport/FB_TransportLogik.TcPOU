@@ -6,7 +6,7 @@ VAR_INPUT
 	bEnable : BOOL;
     bExecute : BOOL;
     eStateE : eBetriebszustand;
-    nStation : INT;
+    nStation : INT := 1;
 
     // Logiksignale -> Hardware Signale
     bStation1 : BOOL;
@@ -46,8 +46,8 @@ END_VAR
 	END_IF
 	
 	1: //Init
-	bEnable := TRUE;
-	bExecuteA := FALSE;
+	bEnableA := TRUE;
+	bExecuteA := TRUE;
 	bStopA := FALSE;
 	bStop1 := FALSE;
 	bStop2 := FALSE;

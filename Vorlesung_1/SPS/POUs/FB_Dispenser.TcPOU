@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Dispenser" Id="{fdebedc6-9784-407d-818b-d9f237ab7ec7}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Dispenser
+VAR_INPUT
+	//Steuereingänge
+	benable : BOOL;
+	bexecute : BOOL;
+	rVelocity : INT;
+	rDistance : INT; 
+	
+END_VAR
+VAR_OUTPUT
+	estate: eBetriebszustand;
+END_VAR
+VAR
+	nstate : INT := 0;
+	
+	//Motion Blöcke der Tc2_Mc2
+	mcReset : MC_Reset;
+	mcPower : MC_Power;
+	mcMove : MC_MoveRelative;
+	
+	bAxPower : BOOL;
+	bAXMove : BOOL;
+	
+END_VAR
+VAR_IN_OUT
+	ax : AXIS_REF;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// update our axis
+ax.ReadStatus();
+
+mcReset(Axis := ax); 
+
+mcPower(
+	Axis:= ax, 
+	Enable:= bAxPower, 
+	Enable_Positive:= bAxPower, 
+	Enable_Negative:= bAxPower, 
+	Override:= 100);
+
+mcMove(
+	Axis:= ax, 
+	Execute:= bAxMove, 
+	Distance:= rDistance, 
+	Velocity:= rVelocity, 
+	Acceleration:= 60.0, 
+	Deceleration:= 60.0);
+
+	
+
+IF NOT benable THEN
+	nstate := 0;
+END_IF
+
+CASE nstate OF 
+	
+	0: //off
+	estate := eBetriebszustand.off;
+	bAxPower := FALSE;
+	bAxMove := FALSE;
+	
+	IF McPower.Status AND benable THEN
+		nstate := 20; //Ready
+	END_IF
+	IF NOT McPower.Status AND bEnable THEN
+		nstate:=10;
+	END_IF
+	
+	10: // INIT_Reset
+	estate := eBetriebszustand.init;
+	mcReset.Execute := TRUE;
+	bAxPower:= FALSE;
+	bAxMove:= FALSE;
+	
+	IF McReset.Done THEN
+		nstate:= 11; //INIT-Power
+	END_IF
+	
+	11: //INIT-Power
+	estate := eBetriebszustand.init;
+	bAxPower := TRUE;
+	
+	IF Mcpower.Status THEN
+		nstate := 20; //Ready
+	END_IF
+	
+	20: //Ready
+	estate:= eBetriebszustand.ready;
+	bAxMove := FALSE;
+	
+	IF bexecute THEN
+		nstate := 30; // Move
+	END_IF
+	
+	30: //Move
+	estate := eBetriebszustand.production;
+	bAxMove := TRUE;
+
+	IF mcmove.Done THEN
+		nstate := 40; //Done
+	END_IF
+	
+	40: //Done
+	estate := eBetriebszustand.done;
+	
+	
+	IF NOT bexecute THEN
+		nstate := 20; // Ready
+	END_IF
+	
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Dispenser">
+      <LineId Id="39" Count="10" />
+      <LineId Id="142" Count="7" />
+      <LineId Id="56" Count="1" />
+      <LineId Id="68" Count="23" />
+      <LineId Id="93" Count="14" />
+      <LineId Id="109" Count="15" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="135" Count="5" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
