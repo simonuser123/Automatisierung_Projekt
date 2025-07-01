@@ -2143,6 +2143,7 @@ External Setpoint Generation:
 					<Drive Name="Drive" DrvType="5">
 						<DrvPara>
 							<Analog VeloReferenz="30" TorqueSetpointScale="10" ScaleFactorActTorque="0.1"/>
+							<TimeComp TaskDelayCycles="1"/>
 						</DrvPara>
 						<Vars VarGrpType="1">
 							<Name>Eingänge</Name>
@@ -2301,6 +2302,7 @@ External Setpoint Generation:
 					<Drive Name="Drive" DrvType="5">
 						<DrvPara>
 							<Analog VeloReferenz="30" TorqueSetpointScale="10" ScaleFactorActTorque="0.1"/>
+							<TimeComp TaskDelayCycles="1"/>
 						</DrvPara>
 						<Vars VarGrpType="1">
 							<Name>Eingänge</Name>
@@ -2456,6 +2458,7 @@ External Setpoint Generation:
 					<Drive Name="Drive" DrvType="5">
 						<DrvPara>
 							<Analog VeloReferenz="30" TorqueSetpointScale="10" ScaleFactorActTorque="0.1"/>
+							<TimeComp TaskDelayCycles="1"/>
 						</DrvPara>
 						<Vars VarGrpType="1">
 							<Name>Eingänge</Name>
@@ -2548,7 +2551,7 @@ External Setpoint Generation:
 		</Motion>
 		<Plc>
 			<Project GUID="{A9D141E6-DF0E-4E90-BF67-1AF37B55296D}" Name="SPS" PrjFilePath="SPS\SPS.plcproj" TmcFilePath="SPS\SPS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPS\SPS.tmc" TmcHash="{49D5CA02-183F-4E12-2741-0570B670AB93}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPS\SPS.tmc" TmcHash="{E63B29A9-9E60-2ACE-134E-BC5D1FAA155A}">
 					<Name>SPS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -2568,6 +2571,11 @@ External Setpoint Generation:
 							<Type GUID="{25521FAA-EA5F-4C7F-8864-BBCCDACD2E98}" Namespace="MC">NCTOPLC_AXIS_REF</Type>
 						</Var>
 						<Var>
+							<Name>IFC_HW.bBandSens1</Name>
+							<Comment><![CDATA[ Forderband Sensor 1 (Extruder 1)]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
 							<Name>IFC_HW.bEinzelSens1</Name>
 							<Comment><![CDATA[ Separation Sensor 1 (Kammer)]]></Comment>
 							<Type>BOOL</Type>
@@ -2580,11 +2588,6 @@ External Setpoint Generation:
 						<Var>
 							<Name>IFC_HW.bEinzelSens3</Name>
 							<Comment><![CDATA[ Separation Sensor 3 (Flasche auf Kopf)]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>IFC_HW.bBandSens1</Name>
-							<Comment><![CDATA[ Forderband Sensor 1 (Extruder 1)]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>

@@ -114,6 +114,7 @@ CASE nstate OF
 	11: //INIT-Power
 	estate := eBetriebszustand.init;
 	bAxPower := TRUE;
+	bAxMove := FALSE;
 	
 	IF Mcpower.Status THEN
 		nstate := 20; //Ready
@@ -122,6 +123,7 @@ CASE nstate OF
 	20: //Homing
 	estate := eBetriebszustand.init;
 	mcHome.Execute := TRUE;
+	bAxMove := FALSE;
 	
     IF homeDone THEN
       nState := 30;  // direkt zur ersten Move-Position
@@ -145,6 +147,7 @@ CASE nstate OF
 
 	50: //Done
 	estate := eBetriebszustand.done;
+	bAxMove := FALSE;
 	
 	IF NOT bexecute THEN
 		nstate := 20; // Ready
@@ -166,14 +169,20 @@ END_CASE
       <LineId Id="49" Count="0" />
       <LineId Id="180" Count="0" />
       <LineId Id="67" Count="24" />
-      <LineId Id="93" Count="11" />
+      <LineId Id="93" Count="7" />
+      <LineId Id="248" Count="0" />
+      <LineId Id="101" Count="3" />
       <LineId Id="208" Count="0" />
-      <LineId Id="210" Count="5" />
+      <LineId Id="210" Count="2" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="213" Count="2" />
       <LineId Id="209" Count="0" />
       <LineId Id="105" Count="2" />
       <LineId Id="109" Count="12" />
       <LineId Id="137" Count="2" />
-      <LineId Id="141" Count="5" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="250" Count="0" />
+      <LineId Id="142" Count="4" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

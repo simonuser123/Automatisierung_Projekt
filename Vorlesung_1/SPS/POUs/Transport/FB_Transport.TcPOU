@@ -77,14 +77,7 @@ fbTransportA(
 	bstopper3=> bStopper3);]]></ST>
     </Implementation>
     <LineIds Name="FB_Transport">
-      <LineId Id="50" Count="7" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="74" Count="0" />
-      <LineId Id="73" Count="0" />
-      <LineId Id="149" Count="16" />
-      <LineId Id="167" Count="7" />
-      <LineId Id="166" Count="0" />
-      <LineId Id="44" Count="5" />
+      <LineId Id="263" Count="42" />
       <LineId Id="43" Count="0" />
     </LineIds>
   </POU>
