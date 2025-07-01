@@ -24,7 +24,6 @@ VAR_OUTPUT
     bStop1 : BOOL;
     bStop2 : BOOL;
     bStop3 : BOOL;
-    bStop4 : BOOL;
 END_VAR
 VAR
 	nstate : INT;
@@ -39,7 +38,7 @@ END_VAR
 	bStop1 := FALSE;
 	bStop2 := FALSE;
 	bStop3 := FALSE;
-	bStop4 := FALSE;
+	eStateA    := eBetriebszustand.off;
 	
 	IF bEnable THEN
 		nstate := 1; //Init
@@ -47,25 +46,25 @@ END_VAR
 	
 	1: //Init
 	bEnableA := TRUE;
-	bExecuteA := TRUE;
+	bExecuteA := FALSE;
 	bStopA := FALSE;
 	bStop1 := FALSE;
 	bStop2 := FALSE;
 	bStop3 := FALSE;
-	bStop4 := FALSE;
+	eStateA    := eBetriebszustand.init;
 
 	IF eStateE = eBetriebszustand.ready THEN
 		nstate := 2; //Ready
 	END_IF
 
 	2: //Ready
-	bEnable := TRUE;
+	bEnableA := TRUE;
 	bExecuteA := FALSE;
 	bStopA := FALSE;
 	bStop1 := FALSE;
 	bStop2 := FALSE;
 	bStop3 := FALSE;
-	bStop4 := FALSE;
+	eStateA    := eBetriebszustand.ready;
 	
 	IF bExecute THEN
 		nstate := 3; //Förderband Start
@@ -74,14 +73,14 @@ END_VAR
 	3: //Förderband Start
 	
 	bExecuteA := TRUE;
+	eStateA    := eBetriebszustand.production;
+	
 	IF (nStation -1) = 1 THEN
 		bStop1 := TRUE;
 	ELSIF (nStation - 1) = 2 THEN
 		bStop2 := TRUE;
 	ELSIF (nStation - 1) = 3 THEN
 		bStop3 := TRUE;
-	ELSIF (nStation - 1) = 4 THEN
-		bStop4 := TRUE;
 	END_IF
 	
 	IF bStation1 AND (nStation = 1) THEN
@@ -95,7 +94,7 @@ END_VAR
 	END_IF
 	
 	4: // Förderband Stop
-	bExecute := FALSE;
+	bExecuteA := FALSE;
 	bStopA := TRUE;
 	
 	IF (nStation -1) = 1 THEN
@@ -104,8 +103,6 @@ END_VAR
 		bStop2 := FALSE;
 	ELSIF (nStation - 1) = 3 THEN
 		bStop3 := FALSE;
-	ELSIF (nStation - 1) = 4 THEN
-		bStop4 := FALSE;
 	END_IF
 	
 	IF estateE = eBetriebszustand.done THEN
@@ -113,6 +110,8 @@ END_VAR
 	END_IF
 	
 	5: // Done
+	eStateA    := eBetriebszustand.done;
+	
 	IF NOT bExecute THEN
 		nstate := 2; // Ready
 	END_IF
@@ -124,31 +123,32 @@ END_CASE]]></ST>
       <LineId Id="35" Count="0" />
       <LineId Id="37" Count="1" />
       <LineId Id="40" Count="0" />
-      <LineId Id="42" Count="7" />
+      <LineId Id="42" Count="2" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="46" Count="3" />
       <LineId Id="41" Count="0" />
       <LineId Id="50" Count="1" />
       <LineId Id="53" Count="4" />
-      <LineId Id="52" Count="0" />
+      <LineId Id="156" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="58" Count="0" />
       <LineId Id="60" Count="1" />
       <LineId Id="63" Count="0" />
       <LineId Id="62" Count="0" />
       <LineId Id="65" Count="5" />
-      <LineId Id="64" Count="0" />
+      <LineId Id="158" Count="0" />
       <LineId Id="71" Count="0" />
       <LineId Id="75" Count="3" />
       <LineId Id="80" Count="0" />
       <LineId Id="79" Count="0" />
       <LineId Id="74" Count="0" />
+      <LineId Id="159" Count="1" />
       <LineId Id="81" Count="0" />
       <LineId Id="83" Count="0" />
       <LineId Id="85" Count="0" />
       <LineId Id="88" Count="0" />
       <LineId Id="90" Count="0" />
       <LineId Id="89" Count="0" />
-      <LineId Id="92" Count="0" />
-      <LineId Id="91" Count="0" />
       <LineId Id="84" Count="0" />
       <LineId Id="82" Count="0" />
       <LineId Id="72" Count="0" />
@@ -162,13 +162,14 @@ END_CASE]]></ST>
       <LineId Id="101" Count="2" />
       <LineId Id="105" Count="0" />
       <LineId Id="107" Count="0" />
-      <LineId Id="109" Count="7" />
+      <LineId Id="109" Count="5" />
       <LineId Id="108" Count="0" />
       <LineId Id="106" Count="0" />
       <LineId Id="104" Count="0" />
       <LineId Id="119" Count="0" />
       <LineId Id="118" Count="0" />
       <LineId Id="121" Count="1" />
+      <LineId Id="162" Count="1" />
       <LineId Id="124" Count="3" />
       <LineId Id="36" Count="0" />
     </LineIds>

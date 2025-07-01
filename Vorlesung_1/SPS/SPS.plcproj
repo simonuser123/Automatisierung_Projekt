@@ -54,6 +54,9 @@
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\Manipulator\FB_MANACHSE.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\Transport\FB_Foerderband.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -76,6 +79,7 @@
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="GVLs" />
+    <Folder Include="POUs\Manipulator" />
     <Folder Include="POUs\Transport" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />

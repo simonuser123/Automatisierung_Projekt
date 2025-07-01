@@ -7,10 +7,11 @@ VAR
 	fbVereinzelung : FB_Vereinzelung;
 	fbezylinder1 : FB_EZylinder;
 	fbezylinder2 : FB_EZylinder;
-	MCPower : MC_Power;
 	fbAmpel : FB_Ampel;
 	fbTransport : FB_Transport;
 	fbDispenser : FB_Dispenser;
+	fbAbfuellmodul : FB_Abfuellmodul;
+	fbManAchse : FB_ManAchse;
 	ix : UINT;
 	ry : REAL;
 	ax : Axis_Ref;
@@ -19,7 +20,30 @@ END_VAR
     <Implementation>
       <ST><![CDATA[ry := FUN_SCALE(TO_REAL(ix),4096,0,350,0);
 
-				
+
+fbAbfuellmodul(
+	bEnable:= IFC_HW.bEnable, 
+	bExecute:= IFC_HW.bExecute, 
+	nstation:= , 
+	bEinzelSens1:= IFC_HW.bEinzelSens1, 
+	bEinzelSens2:= IFC_HW.bEinzelSens2, 
+	bEinzelSens3:= IFC_HW.bEinzelSens3, 
+	bEinzelSens4:= IFC_HW.bBandSens1, 
+	bBandSens1:= IFC_HW.bBandSens1, 
+	bBandSens2:= IFC_HW.bBandSens2, 
+	bBandSens3:= IFC_HW.bBandSens3, 
+	bBandSens4:= IFC_HW.bBandSens4, 
+	bstopper1:= IFC_HW.bBandHub1, 
+	bstopper2:= IFC_HW.bBandHub2, 
+	bstopper3:= IFC_HW.bBandHub3, 
+	estate=> , 
+	bgate1=> fbeZylinder1.bgate, 
+	bgate2=> fbeZylinder2.bgate, 
+	axTransport:= IFC_HW.ax_BandMotor, 
+	axDisp1:= IFC_HW.ax_Extruder1, 
+	axDisp2:= IFC_HW.ax_Extruder2, 
+	axDisp3:= IFC_HW.ax_Extruder3);
+(*				
 fbVereinzelung(
 	benable:= IFC_HW.bEnable, 
 	bexecute:= IFC_HW.bExecute, 
@@ -30,16 +54,15 @@ fbVereinzelung(
 	bgate1=> fbeZylinder1.bgate, 
 	bgate2=> fbeZylinder2.bgate, 
 	estate=> );
-	
+	*)
 	
 	fbezylinder1(bgate:= , berror:= , bR1=>IFC_HW.bR1AKT1 , bR2=>IFC_HW.br2AKT1 );
 	
 	fbezylinder2(bgate:= , berror:= , bR1=>IFC_HW.bR1AKT2 , bR2=> IFC_HW.bR2AKT2);
 	
 	
-	
-	fbAmpel(estate:= fbVereinzelung.estate, bAmpelgruen=>IFC_HW.bAmpelGrun , bAmpelrot=>IFC_HW.bAmpelRot , bAmpelgelb=>IFC_HW.bAmpelGelb );
-
+	fbAmpel(estate:= fbAbfuellmodul.estate, bAmpelgruen=>IFC_HW.bAmpelGrun , bAmpelrot=>IFC_HW.bAmpelRot , bAmpelgelb=>IFC_HW.bAmpelGelb );
+(*	
 fbTransport(
 	bEnable:= IFC_Hw.bEnable, 
 	bExecute:= IFC_HW.bExecute, 
@@ -53,7 +76,7 @@ fbTransport(
 	bstopper2=> IFC_HW.bBandHub2, 
 	bstopper3=> IFC_HW.bBandHub3, 
 	ax:= IFC_HW.ax_BandMotor);
-(*	
+
 fbDispenser(
 	benable:= IFC_Hw.bEnable, 
 	bexecute:= IFC_HW.bExecute, 
@@ -61,17 +84,38 @@ fbDispenser(
 	rDistance:= 10, 
 	estate=> , 
 	ax:= IFC_HW.ax_Extruder1); *)
+	
+fbManAchse(
+	benable:= IFC_Hw.bEnable, 
+	bexecute:= IFC_HW.bExecute, 
+	bEndschalter:= IFC_HW.bManEndXmin, 
+	rPosition:= 10, 
+	rVel:= 30, 
+	estate=> , 
+	ax:= IFC_HW.ax_ManX);
+	
+fbManAchse(
+	benable:= IFC_Hw.bEnable, 
+	bexecute:= IFC_HW.bExecute, 
+	bEndschalter:= IFC_HW.bManEndXmin, 
+	rPosition:= 150, 
+	rVel:= 30, 
+	estate=> , 
+	ax:= IFC_HW.ax_ManY);
 	]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="55" Count="0" />
       <LineId Id="96" Count="0" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="245" Count="20" />
+      <LineId Id="244" Count="0" />
       <LineId Id="94" Count="0" />
       <LineId Id="63" Count="8" />
       <LineId Id="60" Count="0" />
       <LineId Id="160" Count="0" />
       <LineId Id="72" Count="3" />
-      <LineId Id="109" Count="1" />
+      <LineId Id="109" Count="0" />
       <LineId Id="83" Count="1" />
       <LineId Id="216" Count="0" />
       <LineId Id="133" Count="11" />
@@ -79,6 +123,12 @@ fbDispenser(
       <LineId Id="217" Count="0" />
       <LineId Id="220" Count="5" />
       <LineId Id="218" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="283" Count="6" />
+      <LineId Id="281" Count="0" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="291" Count="6" />
+      <LineId Id="290" Count="0" />
       <LineId Id="166" Count="0" />
     </LineIds>
   </POU>

@@ -6,10 +6,28 @@ VAR_INPUT
 	bEnable : BOOL;
 	bExecute : BOOL;
 	nstation : INT;
+	
+    // Vereinzelungs-Sensoren
+    bEinzelSens1 : BOOL;
+    bEinzelSens2 : BOOL;
+    bEinzelSens3 : BOOL;
+    bEinzelSens4 : BOOL;
  		
+	// Foerderband-Sensoren
+	bBandSens1 : BOOL;
+	bBandSens2 : BOOL;
+	bBandSens3 : BOOL;
+	bBandSens4 : BOOL;
+	
+	bstopper1 : BOOL;
+	bstopper2 : BOOL;
+	bstopper3 : BOOL;
+	
 END_VAR
 VAR_OUTPUT
 	estate : eBetriebszustand;
+	bgate1 : BOOL;
+	bgate2 : BOOL;
 END_VAR
 VAR
 	fbVereinzelung : FB_Vereinzelung;
@@ -17,11 +35,67 @@ VAR
 	fbDispenser1 : FB_Dispenser;
 	fbDispenser2 : FB_Dispenser;
 	fbDispenser3 : FB_Dispenser;
-	nstate : INT := 100;
+	nstate : INT := 0;
 END_VAR
-]]></Declaration>
+VAR_IN_OUT
+    // Achsen-Referenzen 
+    axTransport: AXIS_REF;   // Foerderband‐Achse
+    axDisp1    : AXIS_REF;   // Dispenser 1
+    axDisp2    : AXIS_REF;   // Dispenser 2
+    axDisp3    : AXIS_REF;   // Dispenser 3
+END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[CASE nstate OF 
+      <ST><![CDATA[fbVereinzelung(
+	benable:= , 
+	bexecute:= , 
+	bsensor1:= bEinzelSens1, 
+	bsensor2:= bEinzelSens2, 
+	bsensor3:= bEinzelSens3, 
+	bsensor4:= bEinzelSens4, 
+	bgate1=> bgate1, 
+	bgate2=> bgate2, 
+	estate=> );
+
+fbTransport(
+	bEnable:= , 
+	bExecute:= , 
+	nstation:= nstation, 
+	bSens1:= bBandSens1, 
+	bSens2:= bBandSens2, 
+	bSens3:= bBandSens3, 
+	bSens4:= bBandSens4, 
+	eState=> , 
+	bstopper1=> bstopper1, 
+	bstopper2=> bstopper2, 
+	bstopper3=> bstopper3, 
+	ax:= axTransport);
+	
+fbDispenser1(
+	benable:= , 
+	bexecute:= , 
+	rVelocity:= 10, 
+	rDistance:= 10, 
+	estate=> , 
+	ax:= axDisp1);
+	
+fbDispenser2(
+	benable:= , 
+	bexecute:= , 
+	rVelocity:= 10, 
+	rDistance:= 10, 
+	estate=> , 
+	ax:= axDisp2);
+	
+fbDispenser3(
+	benable:= , 
+	bexecute:= , 
+	rVelocity:= 10, 
+	rDistance:= 10, 
+	estate=> , 
+	ax:= axDisp3);
+	
+
+CASE nstate OF 
 	0: // Off
 	fbVereinzelung.benable := FALSE;
 	fbTransport.bEnable := FALSE;
@@ -59,7 +133,7 @@ END_VAR
 	eState :=eBetriebszustand.init;
 	
 	IF fbVereinzelung.estate = eBetriebszustand.ready AND 
-		fbVereinzelung.estate = eBetriebszustand.ready THEN
+		fbTransport.estate = eBetriebszustand.ready THEN
 		nstate := 20; // Ready
 	END_IF
 	
@@ -75,6 +149,12 @@ END_VAR
 	END_IF
 	
 	30: // Start
+	fbVereinzelung.benable := TRUE;
+	fbTransport.bEnable := TRUE;
+	fbDispenser1.bEnable := TRUE;
+	fbDispenser2.bEnable := TRUE;
+	fbDispenser3.bEnable := TRUE;
+	
 	fbVereinzelung.bExecute := TRUE;
 	fbTransport.bExecute := TRUE;
 	fbDispenser1.bExecute := FALSE;
@@ -86,7 +166,7 @@ END_VAR
 	nStation := 1;
 
 	IF fbVereinzelung.estate = eBetriebszustand.done AND 
-		fbTransport.eState = eBetriebszustand.done THEN
+		fbTransport.estate = eBetriebszustand.done THEN
 		nstate := 31; // Extruder 1
 	END_IF
 		
@@ -112,7 +192,7 @@ END_VAR
 	END_IF
 	
 	33: // zweiter Extruder
-	nStation := 2
+	nStation := 2;
 	fbDispenser2.bExecute := TRUE;
 
 	IF fbDispenser2.eState = eBetriebszustand.Done THEN 
@@ -165,6 +245,20 @@ END_VAR
 END_CASE]]></ST>
     </Implementation>
     <LineIds Name="FB_Abfuellmodul">
+      <LineId Id="237" Count="8" />
+      <LineId Id="235" Count="1" />
+      <LineId Id="248" Count="11" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="273" Count="5" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="261" Count="0" />
+      <LineId Id="280" Count="5" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="286" Count="0" />
+      <LineId Id="288" Count="5" />
+      <LineId Id="287" Count="0" />
+      <LineId Id="294" Count="1" />
       <LineId Id="9" Count="0" />
       <LineId Id="28" Count="0" />
       <LineId Id="31" Count="0" />
@@ -190,7 +284,11 @@ END_CASE]]></ST>
       <LineId Id="77" Count="0" />
       <LineId Id="82" Count="3" />
       <LineId Id="76" Count="0" />
-      <LineId Id="86" Count="2" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="297" Count="3" />
+      <LineId Id="296" Count="0" />
+      <LineId Id="301" Count="0" />
+      <LineId Id="87" Count="1" />
       <LineId Id="92" Count="1" />
       <LineId Id="91" Count="0" />
       <LineId Id="188" Count="1" />

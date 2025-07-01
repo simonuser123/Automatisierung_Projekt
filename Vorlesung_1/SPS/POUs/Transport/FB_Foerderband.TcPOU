@@ -61,10 +61,11 @@ fbTon(
   PT := T#1S
 );
 	
-
+(*
 IF NOT benable THEN
 	nstate := 0;
 END_IF
+*)
 
 CASE nstate OF 
 	
@@ -128,6 +129,12 @@ CASE nstate OF
 	estate := eBetriebszustand.production;
     mcHalt.Execute := TRUE;
 	
+	IF mchalt.Done THEN
+		nstate := 40; //Fertig
+	END_IF
+	40: //Fertig
+	estate := eBetriebszustand.done;
+	mcHalt.Execute := FALSE;
 	
 	IF NOT bexecute THEN
 		nstate := 20; // Ready
@@ -155,7 +162,9 @@ END_CASE
       <LineId Id="68" Count="0" />
       <LineId Id="300" Count="0" />
       <LineId Id="235" Count="2" />
-      <LineId Id="72" Count="1" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="73" Count="0" />
       <LineId Id="77" Count="0" />
       <LineId Id="74" Count="0" />
       <LineId Id="213" Count="1" />
@@ -186,7 +195,9 @@ END_CASE
       <LineId Id="243" Count="1" />
       <LineId Id="299" Count="0" />
       <LineId Id="289" Count="0" />
+      <LineId Id="351" Count="2" />
       <LineId Id="247" Count="0" />
+      <LineId Id="348" Count="2" />
       <LineId Id="133" Count="2" />
       <LineId Id="85" Count="0" />
       <LineId Id="75" Count="0" />
