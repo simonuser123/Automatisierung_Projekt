@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Robotsteuerung" Id="{d3df2f2e-da95-4e7a-9ca9-813288b88a86}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Robotsteuerung
+VAR_INPUT
+	bEnable   : BOOL;
+  	bExecute  : BOOL;
+	bxposition : REAL;
+	byposition : REAL;
+	bzposition : REAL;
+	
+	bxEndschalter: BOOL;
+	byEndschalter: BOOL;
+	bzEndschalter: BOOL;
+	bGEndschalter: BOOL;
+	
+	
+END_VAR
+VAR_OUTPUT
+	estate : eBetriebszustand;
+	movedone : BOOL;
+END_VAR
+VAR
+	fbXAchse : FB_Manachse;
+	fbYAchse : FB_Manachse;
+	fbZAchse : FB_Manachse;
+	fbGAchse : FB_ManAchse;  
+	nstate : INT := 0;
+	currentpos : REAL;
+	
+	
+END_VAR
+VAR_IN_OUT
+    // Achsen-Referenzen 
+    ax_ManX    : AXIS_REF;   
+    ax_ManY    : AXIS_REF;   
+    ax_ManZ    : AXIS_REF;  
+	ax_ManG    : AXIS_REF;   
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbXAchse(
+	benable:= , 
+	bexecute:= , 
+	bEndschalter:= bxEndschalter, 
+	rPosition:= bxposition, 
+	rVel:= 30, 
+	estate=> , 
+	ax:= ax_ManX);
+	
+fbYAchse(
+	benable:= , 
+	bexecute:= , 
+	bEndschalter:= bxEndschalter, 
+	rPosition:= byposition, 
+	rVel:= 30, 
+	estate=> , 
+	ax:= ax_ManY);
+	
+fbZAchse(
+	benable:= , 
+	bexecute:= , 
+	bEndschalter:= bzEndschalter, 
+	rPosition:= bzposition, 
+	rVel:= 30, 
+	estate=> , 
+	ax:= ax_ManZ );
+	
+fbGAchse(
+	benable:= , 
+	bexecute:= , 
+	bEndschalter:= bGEndschalter, 
+	rPosition:= , 
+	rVel:= 10, 
+	estate=> , 
+	ax:= ax_ManG);
+	
+	
+CASE nstate OF
+	0: //off
+	estate := eBetriebszustand.off;
+	fbxAchse.benable := FALSE;
+	fbyAchse.benable := FALSE;
+	fbzAchse.benable := FALSE;
+	fbGAchse.benable := FALSE;
+	
+	IF bEnable THEN
+		nstate := 10;
+	END_IF
+	
+	10: //INIT
+	fbxAchse.benable := TRUE;
+	fbyAchse.benable := TRUE;
+	fbzAchse.benable := TRUE;
+	fbGAchse.benable := TRUE;
+	
+	IF fbxAchse.estate = eBetriebszustand.ready AND 
+		fbyAchse.estate = eBetriebszustand.ready AND
+		fbzAchse.estate = eBetriebszustand.ready THEN
+		nstate := 20;
+		currentpos := 0.0;
+	END_IF
+	
+	20: // Ready
+	eState := eBetriebszustand.ready;
+	fbxAchse.benable := TRUE;
+	fbyAchse.benable := TRUE;
+	fbzAchse.benable := TRUE;
+	fbGAchse.benable := TRUE;
+	
+	IF bexecute AND currentpos < 50.0 THEN
+		nstate := 30;
+	ELSIF bexecute AND currentpos > 50.0 THEN
+		nstate := 60;
+	END_IF
+	
+	30: // MOVEXY
+	eState := eBetriebszustand.production;
+	fbXAchse.bexecute := TRUE;
+	fbYAchse.bexecute := TRUE;
+	
+	IF fbXAchse.estate = eBetriebszustand.done AND 
+		fbYAchse.estate = eBetriebszustand.done THEN
+		fbXAchse.bexecute := FALSE;
+		fbYAchse.bexecute := FALSE;
+		nstate := 40;
+	END_IF
+	
+	40: //MoveZ
+	eState := eBetriebszustand.production;
+	fbZAchse.bexecute := TRUE;
+	
+	IF fbZAchse.estate = eBetriebszustand.done THEN
+		currentpos := bzposition;
+		fbXAchse.bexecute := FALSE;
+		nstate  := 50;
+	END_IF
+	
+	50: //Gripper oeffnen
+	eState := eBetriebszustand.production;
+	fbGAchse.rPosition := 0;
+	fbGAchse.bexecute := TRUE;
+	
+	IF fbGAchse.estate = eBetriebszustand.done THEN
+		fbGAchse.bexecute := FALSE;
+		nstate := 100;
+	END_IF
+	
+	60: //Gripper oeffnen
+	eState := eBetriebszustand.production;
+	fbGAchse.rPosition := 8;
+	fbGAchse.bexecute := TRUE;
+	
+	IF fbGAchse.estate = eBetriebszustand.done THEN
+		fbGAchse.bexecute := FALSE;
+		nstate := 70;
+	END_IF	
+	
+	70: //MoveZ
+	eState := eBetriebszustand.production;
+	fbZAchse.bexecute := TRUE;
+	
+	IF fbZAchse.estate = eBetriebszustand.done THEN
+		currentpos := bzposition;
+		fbXAchse.bexecute := FALSE;
+		nstate  := 100;
+	END_IF
+	
+	100: //done
+	eState := eBetriebszustand.done;
+	
+	IF NOT bexecute THEN
+		nstate := 20;
+	END_IF
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Robotsteuerung">
+      <LineId Id="38" Count="6" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="59" Count="6" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="68" Count="6" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="179" Count="0" />
+      <LineId Id="181" Count="6" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="75" Count="2" />
+      <LineId Id="82" Count="2" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="85" Count="1" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="87" Count="4" />
+      <LineId Id="93" Count="1" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="189" Count="0" />
+      <LineId Id="96" Count="1" />
+      <LineId Id="99" Count="1" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="102" Count="2" />
+      <LineId Id="107" Count="1" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="190" Count="0" />
+      <LineId Id="109" Count="2" />
+      <LineId Id="235" Count="1" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="191" Count="2" />
+      <LineId Id="195" Count="1" />
+      <LineId Id="198" Count="2" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="203" Count="0" />
+      <LineId Id="205" Count="2" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="210" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="211" Count="1" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="214" Count="0" />
+      <LineId Id="216" Count="1" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="218" Count="1" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="238" Count="7" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="248" Count="7" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="224" Count="2" />
+      <LineId Id="202" Count="0" />
+      <LineId Id="227" Count="1" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="79" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

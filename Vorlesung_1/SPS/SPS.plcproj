@@ -21,6 +21,9 @@
     <Compile Include="DUTs\eBetriebszustand.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GVLs\GVL_PosKinematic.TcGVL">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GVLs\IFC_HW.TcGVL">
       <SubType>Code</SubType>
     </Compile>
@@ -42,6 +45,9 @@
     <Compile Include="POUs\FB_EZylinder.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\FB_Manipulatormodul.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\FB_Maschinentuer.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -55,6 +61,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Manipulator\FB_MANACHSE.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\Manipulator\FB_Robotsteuerung.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\Transport\FB_Foerderband.TcPOU">

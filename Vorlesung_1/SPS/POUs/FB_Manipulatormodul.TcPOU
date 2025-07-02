@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="FB_Manipulatormodul" Id="{2c2befd5-8aae-4d41-91d7-a7d4b4d4e8de}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Manipulatormodul
+VAR_INPUT
+	bEnable : BOOL;
+	bExecute : BOOL;
+	
+	pXhome : REAL;
+	pYhome : REAL;
+	pZhome : REAL;
+	
+	pXconv : REAL;
+	pYconv : REAL;
+	pZconv : REAL;
+	
+	pXscale : REAL;
+	pYscale : REAL;
+	pZscale : REAL;
+	
+	pXheat : REAL;
+	pYheat : REAL;
+	pZheat : REAL;
+	
+	pX1stor : REAL;
+	pX2stor : REAL;
+	pX3stor : REAL;
+	pX4stor : REAL;
+	pYstor : REAL;
+	pZstor : REAL;
+	
+	estateE : eBetriebszustand;
+	
+	bxEndschalter: BOOL;
+	byEndschalter: BOOL;
+	bzEndschalter: BOOL;
+	bGEndschalter: BOOL;
+	
+END_VAR
+VAR_OUTPUT
+	estate : eBetriebszustand;
+END_VAR
+VAR
+	fbRobotsteuerung : FB_Robotsteuerung;
+	fbTON : TON;
+	nstate : INT := 0;
+	
+	targX   : REAL;
+  	targY   : REAL;
+ 	targZ   : REAL;
+  	goRobot : BOOL;
+END_VAR
+VAR_IN_OUT
+    // Achsen-Referenzen 
+    ax_ManX    : AXIS_REF;   
+    ax_ManY    : AXIS_REF;   
+    ax_ManZ    : AXIS_REF;  
+	ax_ManG    : AXIS_REF;   
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbRobotsteuerung(
+	bEnable:= , 
+	bExecute:= goRobot, 
+	bxposition:= targX, 
+	byposition:= targY, 
+	bzposition:= targZ, 
+	bxEndschalter:= bxEndschalter, 
+	byEndschalter:= byEndschalter, 
+	bzEndschalter:= bzEndschalter, 
+	bGEndschalter:= bGEndschalter, 
+	estate=> , 
+	movedone=> , 
+	ax_ManX:= ax_ManX, 
+	ax_ManY:= ax_ManY, 
+	ax_ManZ:= ax_ManZ, 
+	ax_ManG:= ax_ManG);
+	
+	fbTON(IN:= , PT:=T#10S , Q=> , ET=> );
+CASE nstate OF 
+	0: //off
+	estate := eBetriebszustand.off;
+	fbRobotsteuerung.bEnable := FALSE;
+	
+	IF bEnable THEN
+		nstate := 10;
+	END_IF
+	
+	10: //Init
+	estate := eBetriebszustand.init;
+	fbRobotsteuerung.bEnable := TRUE;
+	
+	IF fbRobotsteuerung.estate = eBetriebszustand.ready THEN
+		nstate := 20;
+	END_IF
+	
+	20: //Ready
+	estate := eBetriebszustand.ready;
+	fbRobotsteuerung.bEnable := TRUE;
+	
+	IF bExecute THEN
+		nState := 30; 
+	END_IF
+	
+	30: //Move to Conveyer
+	estate := eBetriebszustand.production;
+	targX   := pXconv;
+  	targY   := pYconv;
+ 	targZ   := pZconv;
+  	goRobot := TRUE;
+	
+	IF fbRobotsteuerung.estate = eBetriebszustand.done AND
+		estateE = eBetriebszustand.done THEN
+		goRobot := FALSE;
+		nstate := 40;
+	END_IF
+	
+	40: //Lift Z Achse
+	estate := eBetriebszustand.production;
+	targX   := pXconv;
+  	targY   := pYconv;
+ 	targZ   := pZhome;
+  	goRobot := TRUE;
+
+
+	IF fbRobotsteuerung.estate = eBetriebszustand.done THEN
+		goRobot := FALSE;
+		nstate := 50;
+	END_IF
+	
+	50: //scale
+	estate := eBetriebszustand.production;
+	targX   := pXscale;
+  	targY   := pYscale;
+ 	targZ   := pZscale;
+  	goRobot := TRUE;
+	fbTON.IN := TRUE;
+
+	IF fbRobotsteuerung.estate = eBetriebszustand.done AND
+		fbTON.Q = TRUE THEN
+		fbTON.IN := FALSE;
+		goRobot := FALSE;
+		nstate := 60;
+	END_IF
+	
+	60: //Lift Z Achse
+	estate := eBetriebszustand.production;
+	targX   := pXscale;
+  	targY   := pYscale;
+ 	targZ   := pZhome;
+  	goRobot := TRUE;
+
+	IF fbRobotsteuerung.estate = eBetriebszustand.done THEN
+		goRobot := FALSE;
+		nstate := 70;
+	END_IF
+	
+	70: //heat
+	estate := eBetriebszustand.production;
+	targX   := pXheat;
+  	targY   := pYheat;
+ 	targZ   := pZheat;
+  	goRobot := TRUE;
+	fbTON.IN := TRUE;
+	
+	IF fbRobotsteuerung.estate = eBetriebszustand.done AND
+		fbTON.Q = TRUE THEN
+		fbTON.IN := FALSE;
+		goRobot := FALSE;
+		nstate := 80;
+	END_IF
+
+	80: //Lift Z Achse
+	estate := eBetriebszustand.production;
+	targX   := pXheat;
+  	targY   := pYheat;
+ 	targZ   := pZhome;
+  	goRobot := TRUE;
+
+	IF fbRobotsteuerung.estate = eBetriebszustand.done THEN
+		goRobot := FALSE;
+		nstate := 90;
+	END_IF
+	
+	90: //storage
+	estate := eBetriebszustand.production;
+	targX   := pX1stor;
+  	targY   := pYstor;
+ 	targZ   := pZstor;
+  	goRobot := TRUE;
+	fbTON.IN := TRUE;
+
+	IF fbRobotsteuerung.estate = eBetriebszustand.done AND
+		fbTON.Q = TRUE THEN
+		fbTON.IN := FALSE;
+		goRobot := FALSE;
+		nstate := 100;
+	END_IF
+	
+	100: //Lift Z Achse
+	estate := eBetriebszustand.production;
+	targX   := pX1stor;
+  	targY   := pYstor;
+ 	targZ   := pZhome;
+  	goRobot := TRUE;
+
+	IF fbRobotsteuerung.estate = eBetriebszustand.done THEN
+		goRobot := FALSE;
+		nstate := 110;
+	END_IF
+	
+	110: //Home
+	estate := eBetriebszustand.production;
+	targX   := pXhome;
+  	targY   := pYhome;
+ 	targZ   := pZhome;
+  	goRobot := TRUE;
+
+	IF fbRobotsteuerung.estate = eBetriebszustand.done THEN
+		goRobot := FALSE;
+		nstate := 120;
+	END_IF
+	
+	120: // Done
+	estate:= eBetriebszustand.done;
+	fbRobotsteuerung.bExecute := FALSE;
+	
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Manipulatormodul">
+      <LineId Id="53" Count="9" />
+      <LineId Id="64" Count="4" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="81" Count="1" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="85" Count="7" />
+      <LineId Id="95" Count="1" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="97" Count="2" />
+      <LineId Id="245" Count="2" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="103" Count="1" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="250" Count="2" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="248" Count="0" />
+      <LineId Id="118" Count="3" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="122" Count="1" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="254" Count="2" />
+      <LineId Id="253" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="130" Count="1" />
+      <LineId Id="225" Count="1" />
+      <LineId Id="132" Count="1" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="136" Count="1" />
+      <LineId Id="258" Count="2" />
+      <LineId Id="257" Count="0" />
+      <LineId Id="142" Count="3" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="150" Count="1" />
+      <LineId Id="263" Count="2" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="228" Count="1" />
+      <LineId Id="158" Count="1" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="162" Count="2" />
+      <LineId Id="267" Count="2" />
+      <LineId Id="266" Count="0" />
+      <LineId Id="169" Count="3" />
+      <LineId Id="160" Count="1" />
+      <LineId Id="175" Count="1" />
+      <LineId Id="271" Count="2" />
+      <LineId Id="270" Count="0" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="181" Count="1" />
+      <LineId Id="231" Count="1" />
+      <LineId Id="183" Count="1" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="186" Count="1" />
+      <LineId Id="275" Count="2" />
+      <LineId Id="274" Count="0" />
+      <LineId Id="192" Count="3" />
+      <LineId Id="185" Count="0" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="198" Count="1" />
+      <LineId Id="279" Count="2" />
+      <LineId Id="278" Count="0" />
+      <LineId Id="204" Count="3" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="210" Count="0" />
+      <LineId Id="212" Count="1" />
+      <LineId Id="220" Count="1" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

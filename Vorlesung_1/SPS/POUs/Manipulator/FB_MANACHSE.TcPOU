@@ -126,7 +126,7 @@ CASE nstate OF
 	bAxMove := FALSE;
 	
     IF homeDone THEN
-      nState := 30;  // direkt zur ersten Move-Position
+      nState := 30;  
     END_IF
 	
 	30: //Ready
@@ -142,7 +142,7 @@ CASE nstate OF
 	bAxMove := TRUE;
 
 	IF moveDone THEN
-		nstate := 40; //Done
+		nstate := 50; //Done
 	END_IF
 
 	50: //Done

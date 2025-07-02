@@ -14,6 +14,9 @@ VAR
 	fbManAchseX : FB_ManAchse;
 	fbManAchseY : FB_ManAchse;
 	fbManAchseZ : FB_ManAchse;
+	fbManAchseG : FB_ManAchse;
+	fbRobotsteuerung : FB_Robotsteuerung;
+	fbManipulatormodul : FB_Manipulatormodul;
 	ix : UINT;
 	ry : REAL;
 	ax : Axis_Ref;
@@ -46,63 +49,78 @@ fbAbfuellmodul(
 	axDisp2:= IFC_HW.ax_Extruder2, 
 	axDisp3:= IFC_HW.ax_Extruder3);
 	
-(*				
-fbVereinzelung(
-	benable:= IFC_HW.bEnable, 
-	bexecute:= IFC_HW.bExecute, 
-	bsensor1:= IFC_HW.bEinzelSens1, 
-	bsensor2:= IFC_HW.bEinzelSens2, 
-	bsensor3:= IFC_HW.bEinzelSens3, 
-	bsensor4:= IFC_HW.bBandsens1, 
-	bgate1=> fbeZylinder1.bgate, 
-	bgate2=> fbeZylinder2.bgate, 
-	estate=> );
-	*)
-	
 	fbezylinder1(bgate:= , berror:= , bR1=>IFC_HW.bR1AKT1 , bR2=>IFC_HW.br2AKT1 );
 	
 	fbezylinder2(bgate:= , berror:= , bR1=>IFC_HW.bR1AKT2 , bR2=> IFC_HW.bR2AKT2);
 	
 	
 	fbAmpel(estate:= fbAbfuellmodul.estate, bAmpelgruen=>IFC_HW.bAmpelGrun , bAmpelrot=>IFC_HW.bAmpelRot , bAmpelgelb=>IFC_HW.bAmpelGelb );
-(*
-fbTransport(
-	bEnable:= IFC_Hw.bEnable, 
-	bExecute:= IFC_HW.bExecute, 
-	nstation:= 1, 
-	bSens1:= IFC_HW.bBandSens1, 
-	bSens2:= IFC_HW.bBandSens2, 
-	bSens3:= IFC_HW.bBandSens3, 
-	bSens4:= IFC_HW.bBandSens4, 
-	eState=> , 
-	bstopper1=> IFC_HW.bBandHub1, 
-	bstopper2=> IFC_HW.bBandHub2, 
-	bstopper3=> IFC_HW.bBandHub3, 
-	ax:= IFC_HW.ax_BandMotor);
 
-fbDispenser(
-	benable:= IFC_Hw.bEnable, 
-	bexecute:= IFC_HW.bExecute, 
-	rVelocity:= 10, 
-	rDistance:= 10, 
+fbManipulatormodul(
+	bEnable:= IFC_Hw.bEnable, 
+	bExecute:= IFC_Hw.bExecute, 
+	pXhome:= GVL_PosKinematic.pXhome, 
+	pYhome:= GVL_PosKinematic.pYhome, 
+	pZhome:= GVL_PosKinematic.pZhome, 
+	pXconv:= GVL_PosKinematic.pXconv, 
+	pYconv:= GVL_PosKinematic.pYconv, 
+	pZconv:= GVL_PosKinematic.pZconv, 
+	pXscale:= GVL_PosKinematic.pXscale, 
+	pYscale:= GVL_PosKinematic.pYscale, 
+	pZscale:= GVL_PosKinematic.pZscale, 
+	pXheat:= GVL_PosKinematic.pXheat, 
+	pYheat:= GVL_PosKinematic.pYheat, 
+	pZheat:= GVL_PosKinematic.pZheat, 
+	pX1stor:= GVL_PosKinematic.pX1stor, 
+	pX2stor:= GVL_PosKinematic.pX2stor, 
+	pX3stor:= GVL_PosKinematic.pX3stor, 
+	pX4stor:= GVL_PosKinematic.pX4stor, 
+	pYstor:= GVL_PosKinematic.pYstor, 
+	pZstor:= GVL_PosKinematic.pZstor, 
+	estateE:= fbAbfuellmodul.estate, 
+	bxEndschalter:= IFC_HW.bManEndXmin, 
+	byEndschalter:= IFC_HW.bManEndYmin, 
+	bzEndschalter:= IFC_HW.bManEndZmin, 
+	bGEndschalter:= IFC_HW.bManEndGmin, 
 	estate=> , 
-	ax:= IFC_HW.ax_Extruder1); *)
-	
+	ax_ManX:= IFC_HW.ax_ManX, 
+	ax_ManY:= IFC_HW.ax_ManY, 
+	ax_ManZ:= IFC_HW.ax_ManZ, 
+	ax_ManG:= IFC_HW.ax_ManG);
+
+(*
+fbRobotsteuerung(
+	bEnable:= IFC_Hw.bEnable, 
+	bExecute:= IFC_Hw.bExecute, 
+	bxposition:= GVL_PosKinematic.pXconv, 
+	byposition:= GVL_PosKinematic.pYconv, 
+	bzposition:= GVL_PosKinematic.pZconv, 
+	bxEndschalter:= IFC_HW.bManEndXmin, 
+	byEndschalter:= IFC_HW.bManEndYmin, 
+	bzEndschalter:= IFC_HW.bManEndZmin, 
+	bGEndschalter:= IFC_HW.bManEndGmin, 
+	estateE:= fbAbfuellmodul.estate, 
+	estate=> , 
+	movedone=> , 
+	ax_ManX:= IFC_HW.ax_ManX, 
+	ax_ManY:= IFC_HW.ax_ManY, 
+	ax_ManZ:= IFC_HW.ax_ManZ, 
+	ax_ManG:= IFC_HW.ax_ManG);
+
 fbManAchseX(
 	benable:= IFC_Hw.bEnable, 
 	bexecute:= IFC_Hw.bExecute, 
 	bEndschalter:= IFC_HW.bManEndXmin, 
-	rPosition:= 150, 
+	rPosition:= GVL_PosKinematic.pXconv, 
 	rVel:= 30, 
 	estate=> , 
 	ax:= IFC_HW.ax_ManX);
-
 	
 fbManAchseY(
 	benable:= IFC_Hw.bEnable, 
 	bexecute:= IFC_Hw.bExecute, 
 	bEndschalter:= IFC_HW.bManEndYmin, 
-	rPosition:= 150, 
+	rPosition:= GVL_PosKinematic.pYconv, 
 	rVel:= 30, 
 	estate=> , 
 	ax:= IFC_HW.ax_ManY); 
@@ -111,12 +129,20 @@ fbManAchseZ(
 	benable:= IFC_Hw.bEnable, 
 	bexecute:= IFC_Hw.bExecute, 
 	bEndschalter:= IFC_HW.bManEndZmin, 
-	rPosition:= 150, 
+	rPosition:= GVL_PosKinematic.pZconv, 
 	rVel:= 30, 
 	estate=> , 
 	ax:= IFC_HW.ax_ManZ); 	
 
-	]]></ST>
+fbManAchseG(
+	benable:= IFC_Hw.bEnable, 
+	bexecute:= IFC_Hw.bExecute, 
+	bEndschalter:= IFC_HW.bManEndGmin, 
+	rPosition:= 2, 
+	rVel:= 30, 
+	estate=> , 
+	ax:= IFC_HW.ax_ManG);
+*)]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="55" Count="0" />
@@ -125,29 +151,27 @@ fbManAchseZ(
       <LineId Id="375" Count="20" />
       <LineId Id="335" Count="0" />
       <LineId Id="357" Count="0" />
-      <LineId Id="94" Count="0" />
-      <LineId Id="63" Count="8" />
-      <LineId Id="60" Count="0" />
-      <LineId Id="160" Count="0" />
-      <LineId Id="72" Count="3" />
+      <LineId Id="73" Count="2" />
       <LineId Id="109" Count="0" />
-      <LineId Id="83" Count="1" />
-      <LineId Id="216" Count="0" />
-      <LineId Id="133" Count="11" />
-      <LineId Id="132" Count="0" />
-      <LineId Id="217" Count="0" />
-      <LineId Id="220" Count="5" />
-      <LineId Id="218" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="450" Count="0" />
+      <LineId Id="500" Count="0" />
+      <LineId Id="504" Count="29" />
+      <LineId Id="501" Count="1" />
       <LineId Id="280" Count="0" />
+      <LineId Id="484" Count="15" />
+      <LineId Id="482" Count="0" />
+      <LineId Id="481" Count="0" />
       <LineId Id="314" Count="6" />
       <LineId Id="313" Count="0" />
-      <LineId Id="321" Count="0" />
       <LineId Id="240" Count="0" />
       <LineId Id="291" Count="6" />
       <LineId Id="290" Count="0" />
       <LineId Id="326" Count="7" />
-      <LineId Id="324" Count="1" />
-      <LineId Id="166" Count="0" />
+      <LineId Id="324" Count="0" />
+      <LineId Id="473" Count="7" />
+      <LineId Id="432" Count="0" />
+      <LineId Id="414" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

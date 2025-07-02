@@ -37,7 +37,7 @@ VAR
 	fbDispenser3 : FB_Dispenser;
 	nstate : INT := 0;
 	nStation : INT;
-
+	Vcounter : INT;
 END_VAR
 VAR_IN_OUT
     // Achsen-Referenzen 
@@ -252,13 +252,12 @@ END_CASE]]></ST>
       <LineId Id="966" Count="0" />
       <LineId Id="974" Count="13" />
       <LineId Id="1020" Count="1" />
-      <LineId Id="1048" Count="1" />
-      <LineId Id="992" Count="1" />
-      <LineId Id="1051" Count="0" />
-      <LineId Id="1050" Count="0" />
-      <LineId Id="1052" Count="1" />
-      <LineId Id="995" Count="0" />
-      <LineId Id="997" Count="19" />
+      <LineId Id="1113" Count="3" />
+      <LineId Id="1129" Count="0" />
+      <LineId Id="1127" Count="1" />
+      <LineId Id="1118" Count="0" />
+      <LineId Id="1121" Count="1" />
+      <LineId Id="998" Count="18" />
       <LineId Id="869" Count="11" />
       <LineId Id="882" Count="7" />
       <LineId Id="891" Count="6" />
